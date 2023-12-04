@@ -1,30 +1,52 @@
-# React + TypeScript + Vite
+# Antes de empezar
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Guia para utilizar este template
 
-Currently, two official plugins are available:
+El template utiliza algunas dependencias basicas para su funcionamiento, estas son:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- react-router-dom
+- tailwindcss
+- tailwind-merge
+- react-use-form
+- react-toastify
+- zustand
+- axios
+- @tabler/icons-react
 
-## Expanding the ESLint configuration
+Ademas el template esta creado con Vite y typescript, cuenta hooks personalizados que adaptan las librerias utilizadas como tambien hooks de autoria propia que son de utilida a lo largo del desarrollo, si uno o varios de estos no son de utilidad pueden ser eliminados.
+la estructura de carpetas utilizadas se centraliza en desarrollar cada parte del sistema por caracteristicas, por lo que cada funcionalidad del sistema deberia ser generada a parti de la carpeta features, idealmente se debe seguir el mismo patron de las carpetas feature en la parpetas views, para que hagan referencias unas a otras.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Inicio
 
-- Configure the top-level `parserOptions` property like this:
+Para comenzar ejecuta uno de los comando mostrados a continuación, este template puede ser utilizado con cualquier gestor de dependencias, de preferencia yarn.
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+```
+    yarn
+    npm install
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+## Desarrollo
+
+```
+    yarn dev
+    yarn dev -- --host // para levantar un servidor de desarrollo en lan
+    npm run dev
+    npm run dev -- --host // para levantar un servidor de desarrollo en lan
+```
+
+## Producción
+
+Es importante revisar el archivo vite.config.ts, aqui es donde se determina el directorio de salida de la build de proudcción.
+
+```
+    yarn build
+    npm run build
+```
+
+## importante
+
+No olvidar cambiar nombre de proyecto en package.json
+
+Este template tiene configurado eslint y prettier como herramientas de ayuda en el desarrollo, ademas de una configuración para los import alias de la estructura de carpetas utilizada.
+
+⚡⚡⚡🦾🧠⚡⚡⚡
