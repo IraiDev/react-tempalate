@@ -1,3 +1,4 @@
+import { Spinner, cn } from "@nextui-org/react"
 import {
   IconAlertTriangle,
   IconCircleCheck,
@@ -7,10 +8,9 @@ import {
 } from "@tabler/icons-react"
 import { ToastContainer, TypeOptions } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
-import { twMerge } from "tailwind-merge"
 
 const Icons: Record<TypeOptions, React.ReactNode> = {
-  default: undefined,
+  default: <Spinner size="md" color="current" className="text-inherit animate-spin" />,
   error: <IconExclamationCircle size={30} className="text-inherit" />,
   info: <IconInfoCircle size={30} className="text-inherit" />,
   success: <IconCircleCheck size={30} className="text-inherit" />,
@@ -37,7 +37,7 @@ export function ToastProvider() {
   return (
     <ToastContainer
       toastClassName={(props) =>
-        twMerge(
+        cn(
           "relative flex !p-0 min-h-10 rounded-large justify-between overflow-hidden cursor-pointer my-2",
           "bg-gradient-to-r transition-colors shadow-xl font-semibold",
           toastStyles[props?.type ?? "default"],
@@ -47,7 +47,7 @@ export function ToastProvider() {
       icon={({ type }) => Icons[type]}
       closeButton={({ type }) => (
         <button
-          className={twMerge(
+          className={cn(
             "text-inherit h-6 w-6 rounded-full grid place-content-center",
             "transition-colors",
             "top-1.5 right-2 absolute",

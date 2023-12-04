@@ -1,4 +1,4 @@
-import { twJoin } from "tailwind-merge"
+import { cn } from "@nextui-org/react"
 
 export const columnAligns: Record<Align, string> = {
   end: "text-right",
@@ -7,7 +7,7 @@ export const columnAligns: Record<Align, string> = {
 }
 
 export function columnStyles(cols: Column[], index: number, isTh?: boolean) {
-  return twJoin(
+  return cn(
     columnAligns[cols[index].align],
     isTh ? "bg-default-200" : "bg-white",
     cols[index].sticky && "sticky top-0 right-0 z-50",

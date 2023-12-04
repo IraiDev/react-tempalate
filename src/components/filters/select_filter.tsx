@@ -1,22 +1,28 @@
+import { MySelect } from "@components/form"
 import sp from "@configs/search_params"
 import { useQueryParams } from "@utils/hooks"
 import { ChangeEvent } from "react"
+import { Path } from "react-hook-form"
 
 const { page } = sp
 
-interface Props {
-  name: string
+interface Props<T extends object> {
+  name: Path<T>
+  label: string
   options: Option[]
   isLoading: boolean
   className?: string
+  defaultValue?: string
 }
 
-export function SelectFilter({
+export function SelectFilter<T extends object>({
   name,
+  label,
   options,
   isLoading,
+  defaultValue = "",
   className = "w-full max-w-[130px]",
-}: Props) {
+}: Props<T>) {
   const { params, setParams, getParam } = useQueryParams()
 
   const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -30,18 +36,17 @@ export function SelectFilter({
 
   return (
     <div className={className}>
-      <select
+      <MySelect
+        size="sm"
         name={name}
+        label={label}
+        options={options}
         className="w-full"
         disabled={isLoading}
         onChange={handleChange}
-        value={[getParam(name, "")]}>
-        {options.map(({ key, label }) => (
-          <option key={key} value={key}>
-            {label}
-          </option>
-        ))}
-      </select>
+        value={getParam(name, defaultValue)}
+        defaultSelectedKeys={[getParam(name, defaultValue)]}
+      />
     </div>
   )
 }

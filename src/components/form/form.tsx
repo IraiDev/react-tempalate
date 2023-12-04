@@ -1,4 +1,4 @@
-import { twMerge } from "tailwind-merge"
+import { cn } from "@nextui-org/react"
 
 interface Props {
   className: string
@@ -9,7 +9,7 @@ interface Props {
 
 export function Form({ ref, children, className, onSubmit }: Partial<Props>) {
   return (
-    <form ref={ref} onSubmit={onSubmit} className={twMerge("flex flex-col gap-3 w-full", className)}>
+    <form ref={ref} onSubmit={onSubmit} className={cn("flex flex-col gap-3 w-full", className)}>
       {children}
     </form>
   )

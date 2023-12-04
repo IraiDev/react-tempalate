@@ -1,4 +1,6 @@
+import { MyInput } from "@components/form"
 import sp from "@configs/search_params"
+import { IconFilterSearch } from "@tabler/icons-react"
 import { useQueryParams } from "@utils/hooks"
 import { FocusEvent, FormEvent } from "react"
 
@@ -11,7 +13,7 @@ interface Props {
   isLoading?: boolean
 }
 
-export function InputFilter({ name, className = "max-w-xs w-full", isLoading }: Props) {
+export function InputFilter({ label, name, className = "max-w-xs w-full", isLoading }: Props) {
   const { params, setParams, getParam } = useQueryParams()
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -45,13 +47,17 @@ export function InputFilter({ name, className = "max-w-xs w-full", isLoading }: 
 
   return (
     <form onSubmit={handleSubmit} className={className}>
-      <input
+      <MyInput
+        size="sm"
         name={name}
+        label={label}
         className="w-full"
         autoCapitalize="off"
-        disabled={isLoading}
+        isDisabled={isLoading}
+        labelPlacement="inside"
         placeholder="filtrar..."
         onBlur={handleFilterOnBlur}
+        endContent={<IconFilterSearch size={15} />}
         defaultValue={getParam(name, "").toString()}
       />
       <input hidden type="submit" />
