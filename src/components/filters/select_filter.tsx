@@ -4,7 +4,7 @@ import { ChangeEvent } from "react"
 
 const { page } = sp
 
-interface Props  {
+interface Props {
   name: string
   options: Option[]
   isLoading: boolean
@@ -35,8 +35,7 @@ export function SelectFilter({
         className="w-full"
         disabled={isLoading}
         onChange={handleChange}
-        value={getParam(name, defaultValue)}
-      >
+        value={[getParam(name, "")]}>
         {options.map(({ key, label }) => (
           <option key={key} value={key}>
             {label}

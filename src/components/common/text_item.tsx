@@ -1,4 +1,4 @@
-import { cn } from "@nextui-org/react"
+import { twMerge } from "tailwind-merge"
 
 type InnerSize = Size | "xs"
 
@@ -27,7 +27,9 @@ export function TextItem({
   return (
     <p title={tooltip} className={sizes[size]}>
       <strong className="font-semibold mr-1.5">{label}:</strong>
-      <span className={cn(!content && "text-foreground-500")}>{content || defaultContent}</span>
+      <span className={twMerge(!content && "text-foreground-500")}>
+        {content || defaultContent}
+      </span>
     </p>
   )
 }

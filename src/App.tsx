@@ -1,7 +1,7 @@
 import { Suspense } from "react"
 import { RouterProvider } from "react-router-dom"
 import { Fallback, ToastProvider } from "@components/common"
-import { Router } from "@router/_router"
+import { Router } from "@router/router"
 
 export default function App() {
   return (
