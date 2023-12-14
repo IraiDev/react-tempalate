@@ -5,10 +5,19 @@ interface Props extends Omit<ModalProps, "title" | "as" | "ref"> {
   ref?: React.RefObject<HTMLDivElement>
   onSubmit?(e: React.FormEvent): void
   as?: keyof JSX.IntrinsicElements
-  title: string
+  hideHeader?: boolean
+  title?: string
 }
 
-export function MyModal({ ref, title, children, as = "div", onSubmit, ...props }: Props) {
+export function MyModal({
+  ref,
+  title,
+  children,
+  as = "div",
+  onSubmit,
+  hideHeader,
+  ...props
+}: Props) {
   return (
     <Modal
       ref={ref}
@@ -21,7 +30,7 @@ export function MyModal({ ref, title, children, as = "div", onSubmit, ...props }
       isKeyboardDismissDisabled
       {...props}>
       <ModalContent as={as} onSubmit={onSubmit}>
-        <ModalHeader className="text-2xl font-bold">{title}</ModalHeader>
+        {!hideHeader && <ModalHeader className="text-2xl font-bold">{title}</ModalHeader>}
         {children}
       </ModalContent>
     </Modal>
