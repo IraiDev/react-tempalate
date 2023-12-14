@@ -10,7 +10,7 @@ import {
 } from "@nextui-org/react"
 import { IconSearch, IconSelector } from "@tabler/icons-react"
 import { DEFAULT_ICON_SIZE } from "@utils/constants"
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { MyButton, MyModal } from "."
 
 type Item = Option & { selected: boolean }
@@ -24,24 +24,26 @@ interface Props {
 }
 
 export function Search({ trigger, title, dataset = [], selected, onSelect }: Props) {
+  const selectedKey = useRef("")
   const { isOpen, onOpenChange } = useDisclosure()
   const [items, setItems] = useState<Item[]>(
     dataset.map((el) => ({ selected: selected === el.key, ...el })),
   )
 
-  const handleChangeValue = (value: string) => {
-    setItems((prev) => prev.map((el) => ({ ...el, selected: value === el.key })))
+  const handleChangeValue = (key: string) => {
+    selectedKey.current = key
+    setItems((prev) => prev.map((el) => ({ ...el, selected: key === el.key })))
   }
 
   const handleSelect = () => {
-    const selectedItem = items.find((el) => el.selected)?.key ?? ""
-    onSelect?.(selectedItem)
+    onSelect?.(selectedKey.current)
     handleClose()
   }
 
   const handleClose = () => {
-    setItems(dataset.map((el) => ({ selected: selected === el.key, ...el })))
+    setItems(dataset.map((el) => ({ selected: selectedKey.current === el.key, ...el })))
     onOpenChange()
+    selectedKey.current = ""
   }
 
   // const handleFilter = (e: React.FormEvent<HTMLFormElement>) => {
@@ -119,7 +121,7 @@ export function Search({ trigger, title, dataset = [], selected, onSelect }: Pro
           {/* <input hidden type="submit" />
           </form> */}
           <section className="p-2 pb-0">
-            {dataset.length === 0 && (
+            {items.length === 0 && (
               <span className="italic text-default-400 text-center block">
                 No hay resultados...
               </span>
