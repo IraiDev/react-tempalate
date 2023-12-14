@@ -10,7 +10,7 @@ import {
 } from "@nextui-org/react"
 import { IconSearch, IconSelector } from "@tabler/icons-react"
 import { DEFAULT_ICON_SIZE } from "@utils/constants"
-import { useCallback, useMemo, useRef, useState } from "react"
+import { useCallback, useRef, useState } from "react"
 import { MyButton, MyModal } from "."
 
 type Item = Option & { selected: boolean }
@@ -24,14 +24,12 @@ interface Props {
 }
 
 export function Search({ trigger, title, dataset = [], selected, onSelect }: Props) {
-  const initialItems = useMemo(
-    () => dataset.map((el) => ({ ...el, selected: selected === el.key })),
-    [dataset, selected],
-  )
   const selectedKey = useRef(selected ?? "")
   const { isOpen, onOpenChange } = useDisclosure()
   const [inputValue, setInputValue] = useState("")
-  const [items, setItems] = useState<Item[]>(initialItems)
+  const [items, setItems] = useState<Item[]>(
+    dataset.map((el) => ({ ...el, selected: selected === el.key })),
+  )
 
   const handleChangeValue = (key: string) => {
     selectedKey.current = key
@@ -45,7 +43,7 @@ export function Search({ trigger, title, dataset = [], selected, onSelect }: Pro
   }
 
   const handleClose = () => {
-    setItems(initialItems)
+    setItems(dataset.map((el) => ({ ...el, selected: selected === el.key })))
     onOpenChange()
     setInputValue("")
   }
