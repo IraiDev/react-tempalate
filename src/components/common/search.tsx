@@ -10,7 +10,7 @@ import {
 } from "@nextui-org/react"
 import { IconSearch, IconSelector } from "@tabler/icons-react"
 import { DEFAULT_ICON_SIZE } from "@utils/constants"
-import { useRef, useState } from "react"
+import { useCallback, useMemo, useRef, useState } from "react"
 import { MyButton, MyModal } from "."
 
 type Item = Option & { selected: boolean }
@@ -24,11 +24,14 @@ interface Props {
 }
 
 export function Search({ trigger, title, dataset = [], selected, onSelect }: Props) {
-  const selectedKey = useRef("")
-  const { isOpen, onOpenChange } = useDisclosure()
-  const [items, setItems] = useState<Item[]>(
-    dataset.map((el) => ({ selected: selected === el.key, ...el })),
+  const initialItems = useMemo(
+    () => dataset.map((el) => ({ ...el, selected: selected === el.key })),
+    [dataset, selected],
   )
+  const selectedKey = useRef(selected ?? "")
+  const { isOpen, onOpenChange } = useDisclosure()
+  const [inputValue, setInputValue] = useState("")
+  const [items, setItems] = useState<Item[]>(initialItems)
 
   const handleChangeValue = (key: string) => {
     selectedKey.current = key
@@ -37,45 +40,31 @@ export function Search({ trigger, title, dataset = [], selected, onSelect }: Pro
 
   const handleSelect = () => {
     onSelect?.(selectedKey.current)
-    handleClose()
+    onOpenChange()
+    setInputValue("")
   }
 
   const handleClose = () => {
-    setItems(dataset.map((el) => ({ selected: selectedKey.current === el.key, ...el })))
+    setItems(initialItems)
     onOpenChange()
-    selectedKey.current = ""
+    setInputValue("")
   }
-
-  // const handleFilter = (e: React.FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault()
-  //   const { q } = e.target as HTMLFormElement
-
-  //   const initialDatasetState = dataset.map((el) => ({ selected: selected === el.key, ...el }))
-
-  //   setItems(() => {
-  //     if (q.value === "") {
-  //       return initialDatasetState
-  //     }
-  //     return initialDatasetState.filter(
-  //       (el) => el.label.includes(q.value) || el.key.includes(q.value),
-  //     )
-  //   })
-  // }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const initialDatasetState = dataset.map((el) => ({ selected: selected === el.key, ...el }))
     const value = e.target.value
-    setItems(() => {
-      if (value === "") {
-        return initialDatasetState
-      }
-      return initialDatasetState.filter(
-        (el) =>
-          el.key.includes(value) ||
-          el.label.toLocaleLowerCase().includes(value.toLocaleLowerCase()),
-      )
-    })
+    setInputValue(value)
   }
+
+  const filterItems = useCallback((currentItems: Item[], inputValue: string) => {
+    if (inputValue === "") {
+      return currentItems
+    }
+    return currentItems.filter(
+      (el) =>
+        el.key.includes(inputValue) ||
+        el.label.toLocaleLowerCase().includes(inputValue.toLocaleLowerCase()),
+    )
+  }, [])
 
   return (
     <>
@@ -108,20 +97,18 @@ export function Search({ trigger, title, dataset = [], selected, onSelect }: Pro
           footer: "p-2",
         }}>
         <ModalBody>
-          {/* <form onSubmit={handleFilter}> */}
           <MyInput
             autoFocus
             name="q"
+            value={inputValue}
             autoComplete="off"
             autoCapitalize="off"
             placeholder="Buscar..."
             onChange={handleInputChange}
             endContent={<IconSearch size={DEFAULT_ICON_SIZE} />}
           />
-          {/* <input hidden type="submit" />
-          </form> */}
           <section className="p-2 pb-0">
-            {items.length === 0 && (
+            {filterItems(items, inputValue).length === 0 && (
               <span className="italic text-default-400 text-center block">
                 No hay resultados...
               </span>
@@ -131,7 +118,7 @@ export function Search({ trigger, title, dataset = [], selected, onSelect }: Pro
               value={items.find((el) => el.selected)?.key ?? ""}
               className="max-h-56 overflow-auto"
               onValueChange={handleChangeValue}>
-              {items.map((option) => (
+              {filterItems(items, inputValue).map((option) => (
                 <RadioItem value={option.key}>{option.label}</RadioItem>
               ))}
             </RadioGroup>
