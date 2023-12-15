@@ -15,7 +15,8 @@ export const Router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Navigate to={privateRoutes.home} />,
+        // element: <Navigate to={privateRoutes.home} />,
+        element: <Navigate to={publicRoutes.renew} />,
       },
       {
         path: privateRoutes.home,

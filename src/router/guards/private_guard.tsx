@@ -1,15 +1,11 @@
-import { Navigate, Outlet } from "react-router-dom"
 import { publicRoutes } from "@configs/routes"
-import { useRenewSession } from "@features/authentication/hooks"
+import { useAuthStore } from "@features/authentication/stores"
+import { Navigate, Outlet } from "react-router-dom"
 
 function PrivateGuard() {
-  const authenticationState = useRenewSession()
+  const authentication = useAuthStore((state) => state.authentication)
 
-  if (authenticationState === "VALIDATING") {
-    return <Navigate to={`/${publicRoutes.renew}`} />
-  }
-
-  if (authenticationState === "NOT-AUTHENTICATED") {
+  if (authentication === "NOT-AUTHENTICATED") {
     return <Navigate to={`/${publicRoutes.login}`} />
   }
 

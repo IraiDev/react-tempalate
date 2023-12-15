@@ -1,8 +1,7 @@
-import { privateRoutes } from "@configs/routes"
+import { privateRoutes, publicRoutes } from "@configs/routes"
 import { useAuthStore } from "@features/authentication/stores"
 import { useToast } from "@utils/hooks"
-import { hasAuthToken } from "@utils/local_storage_utils"
-import { useLayoutEffect } from "react"
+import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 
 export function useRenewSession() {
@@ -12,24 +11,24 @@ export function useRenewSession() {
   const { warningToast, errorToast, successToast } = useToast()
   const navigate = useNavigate()
 
-  useLayoutEffect(() => {
-    if (hasAuthToken() && authentication === "NOT-AUTHENTICATED") {
-      renew({
-        successFn: ({ ok, message }) => {
-          if (!ok) {
-            warningToast(message)
-            return
-          }
+  useEffect(() => {
+    renew({
+      successFn: ({ ok, message }) => {
+        if (!ok) {
+          warningToast(message)
+          navigate(`/${publicRoutes.login}`, { replace: true })
+          return
+        }
 
-          successToast(message)
-          navigate(`/${privateRoutes.home}`, { replace: true })
-        },
-        errorFn: (message) => {
-          errorToast(message)
-        },
-      })
-    }
-  }, [authentication, renew, navigate, warningToast, errorToast, successToast])
+        successToast(message)
+        navigate(`/${privateRoutes.home}`, { replace: true })
+      },
+      errorFn: (message) => {
+        errorToast(message)
+        navigate(`/${publicRoutes.login}`, { replace: true })
+      },
+    })
+  }, [renew, navigate, warningToast, errorToast, successToast])
 
-  return authentication
+  return { authentication }
 }

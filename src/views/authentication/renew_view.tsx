@@ -1,23 +1,15 @@
-import { Navigate } from "react-router-dom"
-import { useAuthStore } from "@features/authentication/stores"
+import { useRenewSession } from "@features/authentication/hooks"
+import { Spinner } from "@nextui-org/react"
 import { useTitle } from "@utils/hooks"
-import { privateRoutes, publicRoutes } from "@configs/routes"
 
 function RenewView() {
   useTitle("Validando sesión...")
-  const authenticationState = useAuthStore((state) => state.authentication)
-
-  if (authenticationState === "AUTHENTICATED") {
-    return <Navigate to={`/${privateRoutes.home}`} replace />
-  }
-
-  if (authenticationState === "NOT-AUTHENTICATED") {
-    return <Navigate to={`/${publicRoutes.login}`} replace />
-  }
+  useRenewSession()
 
   return (
     <main className="h-screen w-full grid place-content-center">
       <div className="flex gap-3 items-center">
+        <Spinner />
         <p className="animate-pulse">Validando sesión...</p>
       </div>
     </main>
