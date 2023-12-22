@@ -6,7 +6,6 @@ const { limit, page: pageQuery } = params
 
 interface Props {
   total: number
-  isLoading?: boolean
 }
 
 export function usePagination({ total }: Props) {

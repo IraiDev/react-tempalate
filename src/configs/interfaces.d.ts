@@ -30,3 +30,15 @@ interface StatusCallbacks {
   errorFn?(message: string): void
   successFn?(props: HttpResponse): void
 }
+
+interface UserRoutes {
+  path: string
+  name: string
+  icon?: string
+  children: UserRoutes[]
+  type: "link" | "module"
+}
+
+interface FormatNumberOptions extends Intl.NumberFormatOptions {
+  locales?: string
+}

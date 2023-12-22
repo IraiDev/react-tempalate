@@ -1,3 +1,4 @@
 export const privateRoutes = {
-  home: "incio",
+  home: "inicio",
+  logout: "cerrar-sesion",
 }

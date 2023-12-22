@@ -11,6 +11,6 @@ export function useTitle(title: string, options?: Options) {
       return
     }
 
-    document.title = `Curimapu Semillas ${title === "" ? "" : "|"} ${title}`
+    document.title = `Serfoind ${title === "" ? "" : "|"} ${title}`
   }, [title, options])
 }

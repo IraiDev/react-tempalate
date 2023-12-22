@@ -1,5 +1,5 @@
 import { publicRoutes } from "@configs/routes"
-import { useAuthStore } from "@features/authentication/stores"
+import { useAuthStore } from "@features/autenticacion/stores"
 import { Navigate, Outlet } from "react-router-dom"
 
 function PrivateGuard() {

@@ -1,33 +1,48 @@
 import { apiErrorMessage } from "@configs/api"
 import { removeAuthTokenFromLocalStorage } from "@utils/local_storage_utils"
-import { sleep } from "@utils/functions_utils"
 import { create } from "zustand"
+import { loginService, renewService } from "../services"
 
-type Renew = Pick<StatusCallbacks, "successFn" | "errorFn">
-type Logout = Pick<StatusCallbacks, "successFn">
+type Renew = StatusCallbacks
 
 interface State {
+  forms: UserForms[]
+  user: AuthUser | null
   authentication: AuthStates
+  privileges: Privileges | null
 }
 
 interface Actions {
-  login(props: StatusCallbacks): void
   renew(props: Renew): void
-  logout(props: Logout): void
+  logout(): void
+  login(props: StatusCallbacks & { payload: AuthPayload }): void
 }
 
 const initialState: State = {
+  forms: [],
+  user: null,
+  privileges: null,
   authentication: "NOT-AUTHENTICATED",
 }
 
 export const useAuthStore = create<State & Actions>((set) => ({
   ...initialState,
-  login: async ({ successFn, finallyFn, errorFn }) => {
+  login: async ({ payload, successFn, finallyFn, errorFn }) => {
     try {
-      await sleep()
-      successFn?.({ ok: true, message: "mensaje aqui" })
+      const { ok, message, data } = await loginService(payload)
+      successFn?.({ ok, message })
 
-      set({ authentication: "AUTHENTICATED" })
+      if (!ok) {
+        set(initialState)
+        return
+      }
+
+      set({
+        user: data.usuario,
+        forms: data.formularios,
+        privileges: data.privilegios,
+        authentication: "AUTHENTICATED",
+      })
     } catch (error) {
       const message = apiErrorMessage(error)
       errorFn?.(message)
@@ -35,22 +50,33 @@ export const useAuthStore = create<State & Actions>((set) => ({
       finallyFn?.()
     }
   },
-  renew: async ({ successFn, errorFn }: Renew) => {
+  renew: async ({ successFn, errorFn, finallyFn }: Renew) => {
     try {
       set({ authentication: "VALIDATING" })
 
-      await sleep()
-      successFn?.({ ok: true, message: "mensaje aqui" })
+      const { ok, message, data } = await renewService()
+      successFn?.({ ok, message })
 
-      set({ authentication: "AUTHENTICATED" })
+      if (!ok) {
+        set(initialState)
+        return
+      }
+
+      set({
+        user: data.usuario,
+        forms: data.formularios,
+        privileges: data.privilegios,
+        authentication: "AUTHENTICATED",
+      })
     } catch (error) {
       const message = apiErrorMessage(error)
       errorFn?.(message)
+    } finally {
+      finallyFn?.()
     }
   },
-  logout: ({ successFn }: Logout) => {
+  logout: () => {
     set(initialState)
     removeAuthTokenFromLocalStorage()
-    successFn?.({ message: "Sesión cerrada", ok: true })
   },
 }))
