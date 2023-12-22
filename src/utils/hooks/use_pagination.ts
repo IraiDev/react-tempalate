@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react"
-import { useQueryParams } from "."
 import params from "@configs/search_params"
+import { useMemo } from "react"
+import { useQueryParams } from "."
 
 const { limit, page: pageQuery } = params
 
@@ -9,17 +9,14 @@ interface Props {
 }
 
 export function usePagination({ total }: Props) {
-  const [page, setPage] = useState(+pageQuery.default)
   const { params, setParams, getParam } = useQueryParams<"pagina" | "limite">()
-
-  useEffect(() => {
-    setPage(+getParam("pagina", pageQuery.default))
-  }, [getParam])
-
-  const totalPages = Math.ceil((total || 1) / +getParam("limite", limit.default))
+  const page = useMemo(() => +getParam("pagina", pageQuery.default), [getParam])
+  const totalPages = useMemo(
+    () => Math.ceil((total || 1) / +getParam("limite", limit.default)),
+    [getParam, total],
+  )
 
   const onChangePage = (value: number) => {
-    setPage(value)
     params.set(pageQuery.query, value.toString())
     setParams(params)
   }
@@ -28,7 +25,6 @@ export function usePagination({ total }: Props) {
     if (page === 1) return
 
     const newPage = page - 1
-    setPage(newPage)
     params.set(pageQuery.query, newPage.toString())
     setParams(params)
   }
@@ -37,15 +33,14 @@ export function usePagination({ total }: Props) {
     if (page === totalPages) return
 
     const newPage = page + 1
-    setPage(newPage)
     params.set(pageQuery.query, newPage.toString())
     setParams(params)
   }
 
   return {
-    totalPages,
     page,
     onNext,
+    totalPages,
     onPrevious,
     onChangePage,
   }
