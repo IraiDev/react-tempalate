@@ -1,19 +1,34 @@
 import { Checkbox, CheckboxProps } from "@nextui-org/react"
+import { controlledFieldError } from "@utils/erros_utils"
+import { Control, Controller, Path } from "react-hook-form"
 
-interface Props extends Omit<CheckboxProps, "ref" | "checked" | "name"> {
-  name: string
+interface Props<T extends object> extends CheckboxProps {
   label: string
-  checked: boolean
-  ref: React.RefObject<HTMLLabelElement>
+  control?: Control<T>
+  controlName?: Path<T>
+  checkboxRef?: React.RefObject<HTMLLabelElement>
 }
 
-export function MyCheckbox({ ref, checked, ...props }: Partial<Props>) {
-  return <Checkbox {...props} ref={ref} isSelected={checked} />
-}
+export function MyCheckbox<T extends object>({
+  name,
+  label,
+  control,
+  controlName,
+  checkboxRef,
+  ...props
+}: Props<T>) {
+  controlledFieldError(control, controlName)
+  if (control && controlName) {
+    return (
+      <Controller
+        control={control}
+        name={controlName}
+        render={({ field: { value, ...restField } }) => (
+          <Checkbox {...props} {...restField} isSelected={value} children={label} />
+        )}
+      />
+    )
+  }
 
-// const MyCheckbox = React.forwardRef(function (
-//   props: CheckboxProps,
-//   ref: React.ForwardedRef<HTMLLabelElement>,
-// ) {
-//   return <Checkbox ref={ref} {...props} />
-// })
+  return <Checkbox ref={checkboxRef} {...props} children={label} name={name} />
+}

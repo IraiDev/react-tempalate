@@ -3,8 +3,6 @@ import sp from "@configs/search_params"
 import { useQueryParams } from "@utils/hooks"
 import { ChangeEvent } from "react"
 
-const { page } = sp
-
 interface Props {
   name: string
   label: string
@@ -29,7 +27,7 @@ export function SelectFilter({
     const isEmpty = !value
 
     isEmpty ? params.delete(name) : params.set(name, value)
-    params.set(page.query, page.default)
+    params.set(sp.page.query, sp.page.default)
     setParams(params)
   }
 

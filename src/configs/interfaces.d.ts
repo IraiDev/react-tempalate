@@ -16,6 +16,10 @@ interface Column {
   sticky?: boolean
 }
 
+interface CustomTableColumn extends Omit<Column, "align"> {
+  align: CellAlign
+}
+
 interface Option {
   key: string
   label: string

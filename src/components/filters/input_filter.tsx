@@ -1,20 +1,39 @@
 import { MyInput } from "@components/form"
 import sp from "@configs/search_params"
-import { IconFilterSearch } from "@tabler/icons-react"
+import { cn } from "@nextui-org/react"
+import { IconFilter } from "@tabler/icons-react"
 import { useQueryParams } from "@utils/hooks"
-import { FocusEvent, FormEvent } from "react"
+import { FocusEvent, FormEvent, useEffect, useRef } from "react"
 
 const { page } = sp
 
-interface Props {
-  name: string
-  label: string
+interface Props<T extends string> {
+  name: T
+  label?: string
+  type?: InputTypes
   className?: string
   isLoading?: boolean
+  placeholder?: string
 }
 
-export function InputFilter({ label, name, className = "max-w-xs w-full", isLoading }: Props) {
+export function InputFilter<T extends string>({
+  label,
+  name,
+  isLoading,
+  placeholder,
+  type = "text",
+  className = "pl-2 pb-2",
+}: Props<T>) {
   const { params, setParams, getParam } = useQueryParams()
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    const input = inputRef.current
+
+    if (input === null) return
+
+    input.value = getParam(name, "")
+  }, [inputRef, name, getParam])
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -48,17 +67,24 @@ export function InputFilter({ label, name, className = "max-w-xs w-full", isLoad
   return (
     <form onSubmit={handleSubmit} className={className}>
       <MyInput
-        size="sm"
+        ref={inputRef}
+        size="md"
         name={name}
+        type={type}
         label={label}
         className="w-full"
         autoCapitalize="off"
         isDisabled={isLoading}
-        labelPlacement="inside"
-        placeholder="filtrar..."
         onBlur={handleFilterOnBlur}
-        endContent={<IconFilterSearch size={15} />}
-        defaultValue={getParam(name, "").toString()}
+        placeholder={placeholder ?? "filtrar..."}
+        endContent={
+          type === "text" && (
+            <IconFilter
+              size={18}
+              className={cn(params.has(name) ? "text-secondary-400" : "text-default-500")}
+            />
+          )
+        }
       />
       <input hidden type="submit" />
     </form>

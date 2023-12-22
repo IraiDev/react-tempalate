@@ -1,8 +1,7 @@
 import { publicRoutes } from "@configs/routes"
-import { useMyForm } from "@utils/hooks"
 import { hasAuthToken } from "@utils/local_storage_utils"
 import { useEffect, useState } from "react"
-import { SubmitHandler } from "react-hook-form"
+import { SubmitHandler, useForm } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 
 export function useLoginForm() {
@@ -17,7 +16,7 @@ export function useLoginForm() {
   // const { successToast, errorToast, warningToast } = useToast()
 
   // controlador de formularios
-  const { formField, handleSubmit } = useMyForm<AuthPayload>({
+  const { control, handleSubmit } = useForm<AuthPayload>({
     defaultValues: {
       usuario: "",
       contrasena: "",
@@ -55,7 +54,7 @@ export function useLoginForm() {
   }
 
   return {
-    formField,
+    control,
     isLoading,
     handleSubmit: handleSubmit(onSubmit),
   }
